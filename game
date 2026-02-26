@@ -1,0 +1,256 @@
+using System;
+
+public class Program
+{
+    
+
+    public static void Main()
+    {
+        bool running = true;
+
+        while (running)
+        {
+            Console.WriteLine("......Game Menu.......");
+            Console.WriteLine("Press 1 to start Naughts and Crosses (PVP)");
+            Console.WriteLine("Press 2 to start Rock, Paper, Scissors (PVE)");
+			Console.WriteLine("Press 3 to start Number Guessing Game (PVE)");
+            Console.WriteLine("Press 4 to exit the game.");
+            Console.Write("Please select an option: ");
+
+            string choice = Console.ReadLine();
+
+            switch (choice)
+            {
+                case "1":
+                    PlayNC();
+                    break;
+
+                case "2":
+                    PlayRPS();
+                    break;
+				case "3":
+					PlayNG();
+					break;
+
+                case "4":
+                    running = false;
+                    break;
+
+                default:
+                    Console.WriteLine("Invalid Selection. Press any key.");
+                    Console.ReadKey();
+                    break;
+            }
+        }
+    }
+	
+	static string[] grid = new string[9] { "1","2","3","4","5","6","7","8","9" };
+	static int NCuser1 = 0;
+	static int NCuser2 = 0;
+	static int NCdraws = 0;
+    static void PrintNCLeaderboard()
+	{
+		Console.WriteLine($"Player 1: {NCuser1} | Player 2: {NCuser2} | Draws: {NCdraws}");
+	}
+	static void PlayNC()
+	{
+		while (true)
+		{
+			bool playerOneTurn = true;
+			int turns = 0;
+
+
+
+			while (!victory() && turns != 9)
+			{
+				gridd();
+
+				if (playerOneTurn)
+					Console.WriteLine("Player one turn, choose a square: ");
+				else
+					Console.WriteLine("Player two turn, choose a square: ");
+
+				string choice = Console.ReadLine();
+
+				if (grid.Contains(choice))
+				{
+					int gridindex = Convert.ToInt32(choice) - 1;
+
+					if (playerOneTurn)
+						grid[gridindex] = "X";
+					else
+						grid[gridindex] = "O";
+
+					turns++;
+
+					playerOneTurn = !playerOneTurn;
+				}
+			}
+
+			Console.Clear();
+			gridd();
+
+			if (victory())
+			{
+				bool player1Won = !playerOneTurn;
+
+				if (player1Won)
+				{
+					NCuser1++;
+					Console.WriteLine("Player 1 (X) wins!");
+				}
+				else
+				{
+					NCuser2++;
+					Console.WriteLine("Player 2 (O) wins!");
+				}
+			}
+			else
+			{
+				NCdraws++;
+				Console.WriteLine("Tie!");
+			}
+
+			PrintNCLeaderboard();
+
+			Console.Write("Play again? (y/n): ");
+			string again = Console.ReadLine()?.Trim().ToLower();
+
+			if (again != "y")
+				break;
+			else if (again == "n")
+				continue;
+			else
+				Console.WriteLine("Invalid choice, choose y/n");
+		}
+	}
+
+	static bool victory()
+	{
+		bool row1 = grid[0] == grid[1] && grid[1] == grid[2];
+		bool row2 = grid[3] == grid[4] && grid[4] == grid[5];
+		bool row3 = grid[6] == grid[7] && grid[7] == grid[8];
+		bool col1 = grid[0] == grid[3] && grid[3] == grid[6];
+		bool col2 = grid[1] == grid[4] && grid[4] == grid[7]; 
+		bool col3 = grid[2] == grid[5] && grid[5] == grid[8];
+		bool diagDown = grid[0] == grid[4] && grid[4] == grid[8];
+		bool diagUp = grid[6] == grid[4] && grid[4] == grid[2];
+
+		return row1 || row2 || row3 || col1 || col2 || col3 || diagDown || diagUp;
+
+
+	}
+
+	static void gridd()
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			Console.WriteLine("---------");
+
+			for (int j = 0; j < 3; j++)
+			{
+				Console.Write("| " + grid[i * 3 + j] + " ");
+			}
+			Console.WriteLine("|");
+		}
+		Console.WriteLine("---------");
+	}
+
+
+	static void PlayRPS()
+	{
+		int playerScore = 0;
+		int computerScore = 0;
+		int draws = 0;
+
+		Random rand = new Random();
+		string[] options = { "rock", "paper", "scissors" };
+
+		while (true)
+		{
+			Console.WriteLine("\nRock, Paper, or Scissors? (type 'stop' to return)");
+			Console.Write("Your choice: ");
+			string playerChoice = Console.ReadLine()?.ToLower();
+
+			if (playerChoice == "stop")
+				break;
+
+			if (playerChoice != "rock" && playerChoice != "paper" && playerChoice != "scissors")
+			{
+				Console.WriteLine("Invalid choice.");
+				continue;
+			}
+
+			string computerChoice = options[rand.Next(3)];
+			Console.WriteLine("Computer chose: " + computerChoice);
+
+			if (playerChoice == computerChoice)
+			{
+				draws++;
+				Console.WriteLine("Draw!");
+			}
+			else if ((playerChoice == "rock" && computerChoice == "scissors") ||
+					 (playerChoice == "paper" && computerChoice == "rock") ||
+					 (playerChoice == "scissors" && computerChoice == "paper"))
+			{
+				playerScore++;
+				Console.WriteLine("You win!");
+			}
+			else
+			{
+				computerScore++;
+				Console.WriteLine("Computer wins!");
+			}
+
+			Console.WriteLine("Score -> You: " + playerScore + " | Computer: " + computerScore + " | Draws: " + draws);
+		}
+	}
+	static void PlayNG()
+	{
+		//fix stop functionality not working properly
+		Random num = new Random();
+		int numchoice = num.Next(1, 101);
+		int attempts = 0;
+		Console.WriteLine("What number do you think I'm thinking of? It's between 1-100");
+		Console.WriteLine("If you'd like to stop the game, type stop.");
+		string stop = Console.ReadLine();
+		if (stop == "stop")
+			{
+				Main();
+			}
+		else
+		{
+			while (true)
+			{
+				Console.WriteLine("What's your guess? ");
+				int guess = Convert.ToInt32(Console.ReadLine());
+
+
+				if(guess == numchoice)
+				{
+					attempts++;
+					Console.WriteLine("Correct!");
+					Console.WriteLine($"Attempts: {attempts}");
+					break;
+				}
+				else if (guess > numchoice)
+				{
+					Console.WriteLine("Too high, try again");
+					attempts++;
+					continue;
+				}
+				else if (guess < numchoice)
+				{
+					Console.WriteLine("Too low, try again");
+					attempts++;
+					continue;
+				}
+				else
+				{
+					Console.WriteLine("Invalid choice.");
+					continue;
+				}
+			}
+		}
+	}
+}
