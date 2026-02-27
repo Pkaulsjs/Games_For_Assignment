@@ -10,7 +10,7 @@ public class Program
 
         while (running)
         {
-            Console.WriteLine("\n......Game Menu.......");
+            Console.WriteLine("......Game Menu.......");
             Console.WriteLine("Press 1 to start Naughts and Crosses (PVP)");
             Console.WriteLine("Press 2 to start Rock, Paper, Scissors (PVE)");
 			Console.WriteLine("Press 3 to start Number Guessing Game (PVE)");
@@ -54,11 +54,8 @@ public class Program
 	}
 	static void PlayNC()
 	{
-		Console.WriteLine("\nNaughts and crosses game");
-
 		while (true)
 		{
-			grid = new string[] { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 			bool playerOneTurn = true;
 			int turns = 0;
 
@@ -90,6 +87,7 @@ public class Program
 				}
 			}
 
+			Console.Clear();
 			gridd();
 
 			if (victory())
@@ -116,12 +114,12 @@ public class Program
 			PrintNCLeaderboard();
 
 			Console.Write("Play again? (y/n): ");
-			string again = Console.ReadLine()?.Trim().ToLower();
+			string again = Console.ReadLine().ToLower();
 
-			if (again == "y")
-				continue;
-			else if (again == "n")
+			if (again != "y")
 				break;
+			else if (again == "n")
+				continue;
 			else
 				Console.WriteLine("Invalid choice, choose y/n");
 		}
@@ -147,7 +145,7 @@ public class Program
 	{
 		for (int i = 0; i < 3; i++)
 		{
-			Console.WriteLine("-------------");
+			Console.WriteLine("---------");
 
 			for (int j = 0; j < 3; j++)
 			{
@@ -155,7 +153,7 @@ public class Program
 			}
 			Console.WriteLine("|");
 		}
-		Console.WriteLine("-------------");
+		Console.WriteLine("---------");
 	}
 
 
@@ -167,7 +165,6 @@ public class Program
 
 		Random rand = new Random();
 		string[] options = { "rock", "paper", "scissors" };
-		Console.WriteLine("\nRock paper scissors game");
 
 		while (true)
 		{
@@ -210,45 +207,49 @@ public class Program
 	}
 	static void PlayNG()
 	{
+		//fix stop functionality not working properly
 		Random num = new Random();
 		int numchoice = num.Next(1, 101);
 		int attempts = 0;
-
-		Console.WriteLine("\n--- Number Guessing Game ---");
-		Console.WriteLine("I'm thinking of a number between 1 and 100.");
-		Console.WriteLine("Type your guess, or type 'stop' to return to the menu.");
-
-		while (true)
-		{
-			Console.Write("Your guess: ");
-			string input = Console.ReadLine()?.ToLower();
-
-			if (input == "stop")
+		Console.WriteLine("What number do you think I'm thinking of? It's between 1-100");
+		Console.WriteLine("If you'd like to stop the game, type stop.");
+		string stop = Console.ReadLine();
+		if (stop == "stop")
 			{
-				break; 
+				Main();
 			}
-
-			if (int.TryParse(input, out int guess))
+		else
+		{
+			while (true)
 			{
-				attempts++;
+				Console.WriteLine("What's your guess? ");
+				int guess = Convert.ToInt32(Console.ReadLine());
 
-				if (guess == numchoice)
+
+				if(guess == numchoice)
 				{
-					Console.WriteLine($"Correct! It took you {attempts} attempts.");
-					break; 
+					attempts++;
+					Console.WriteLine("Correct!");
+					Console.WriteLine($"Attempts: {attempts}");
+					break;
 				}
 				else if (guess > numchoice)
 				{
-					Console.WriteLine("Too high, try again.");
+					Console.WriteLine("Too high, try again");
+					attempts++;
+					continue;
+				}
+				else if (guess < numchoice)
+				{
+					Console.WriteLine("Too low, try again");
+					attempts++;
+					continue;
 				}
 				else
 				{
-					Console.WriteLine("Too low, try again.");
+					Console.WriteLine("Invalid choice.");
+					continue;
 				}
-			}
-			else
-			{
-				Console.WriteLine("Invalid input. Please enter a number or 'stop'.");
 			}
 		}
 	}
